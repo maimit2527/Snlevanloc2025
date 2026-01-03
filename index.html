@@ -1,405 +1,736 @@
 <!doctype html>
-<html lang="vi">
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>🎂 Happy Birthday</title>
-  <style>
-    body{
-      margin:0; padding:16px;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      min-height:100vh;
-      display:flex; flex-direction:column; align-items:center; gap:12px;
-      background: #fff7fb;
-    }
-    h1{ margin:6px 0 0; font-size:18px; text-align:center; }
-    canvas{
-      width:min(92vw, 420px);
-      height:auto;
-      border-radius:18px;
-      background:#fff;
-      box-shadow:0 14px 34px rgba(0,0,0,.14);
-    }
-    .panel{
-      width:min(92vw, 420px);
-      background:#fff;
-      border:1px solid rgba(0,0,0,.08);
-      border-radius:16px;
-      padding:12px;
-      box-shadow:0 10px 22px rgba(0,0,0,.08);
-    }
-    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-    button{
-      border:0; border-radius:14px;
-      padding:10px 12px;
-      font-weight:800; cursor:pointer;
-      background:#ff4fa3; color:#fff;
-      box-shadow:0 10px 20px rgba(255,79,163,.22);
-    }
-    button.secondary{ background:#2b2b2b; box-shadow:0 10px 20px rgba(0,0,0,.16); }
-    button:disabled{ opacity:.55; cursor:not-allowed; }
-    label{ font-size:13px; color:#333; }
-    input[type="range"]{ width:230px; }
-    .meter{ height:10px; border-radius:999px; overflow:hidden; background:rgba(0,0,0,.08); flex:1; min-width:160px; }
-    .meter > div{ height:100%; width:0%; background:#ff4fa3; }
-    .status{ font-size:13px; font-weight:700; color:#111; }
-    .small{ font-size:12px; color:#555; }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Happy Birthday — LÊ VĂN LỘC</title>
+<style>
+  /* Mobile-first, centered layout */
+  :root{
+    --bg-1: #071126; /* dark navy */
+    --bg-2: #0b1722; /* charcoal-teal mix */
+    --teal: #0fb3aa; /* teal accent */
+    --charcoal: #1f2a30;
+    --gold: #d9a441; /* warm gold */
+    --muted: #97a0a6;
+    --card-bg: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  }
+  html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;}
+  body{
+    background: radial-gradient(800px 500px at 10% 10%, rgba(15,179,170,0.03), transparent 10%),
+                linear-gradient(180deg,var(--bg-1),var(--bg-2));
+    color: #e6eef0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+
+  .wrap{
+    width:100%;
+    max-width:420px;
+    text-align:center;
+  }
+
+  header{
+    margin-bottom:12px;
+  }
+  h1{
+    font-size:18px;
+    margin:0 0 6px;
+    letter-spacing:0.6px;
+    color:#f3f7f8;
+  }
+  p.lead{
+    margin:0 0 14px;
+    color:var(--muted);
+    font-size:13px;
+  }
+
+  /* Canvas container */
+  .canvas-wrap{
+    background:var(--card-bg);
+    border-radius:14px;
+    padding:18px 14px;
+    box-shadow:0 8px 30px rgba(2,6,23,0.6);
+    margin-bottom:14px;
+  }
+
+  canvas{
+    width:100%;
+    height:auto;
+    display:block;
+    max-width:380px;
+    margin:0 auto;
+    touch-action:none;
+  }
+
+  /* Controls */
+  .controls{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin-bottom:10px;
+  }
+  button{
+    background:linear-gradient(180deg,var(--teal),#058f86);
+    color:#071126;
+    border:0;
+    padding:10px 12px;
+    border-radius:10px;
+    font-weight:700;
+    font-size:14px;
+    box-shadow:0 6px 16px rgba(3,10,12,0.45);
+    cursor:pointer;
+    min-width:120px;
+  }
+  button.secondary{
+    background:linear-gradient(180deg,#323a3e,#22292d);
+    color:#e6eef0;
+    min-width:110px;
+  }
+  button:disabled{opacity:0.5;cursor:not-allowed;}
+
+  /* Slider row */
+  .row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    justify-content:center;
+    margin:8px 0 14px;
+  }
+  .slider {
+    -webkit-appearance: none;
+    appearance:none;
+    width:170px;
+    height:10px;
+    border-radius:10px;
+    background:linear-gradient(90deg,var(--teal),var(--gold));
+    outline:none;
+  }
+  .slider::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    appearance:none;
+    width:18px;height:18px;border-radius:50%;
+    background:#fff;border:3px solid #1f2a30;
+    box-shadow:0 3px 8px rgba(1,1,1,0.5);
+  }
+
+  /* Meter */
+  .meter{
+    width:100%;
+    max-width:340px;
+    margin:0 auto;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    justify-content:center;
+  }
+  .meter-bar{
+    height:14px;
+    width:220px;
+    background:linear-gradient(90deg,#0e1416,#1b2426);
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:inset 0 -4px 10px rgba(0,0,0,0.4);
+  }
+  .meter-fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,var(--gold),var(--teal));
+    transition:width 60ms linear;
+  }
+  .meter-num{
+    min-width:46px;
+    font-weight:700;
+    font-size:13px;
+    color:var(--muted);
+  }
+
+  /* Overlay when blown */
+  .overlay{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    pointer-events:none;
+  }
+  .overlay-card{
+    background:linear-gradient(180deg, rgba(7,17,38,0.92), rgba(7,17,38,0.86));
+    padding:22px 18px;
+    border-radius:14px;
+    text-align:center;
+    box-shadow:0 18px 40px rgba(2,6,23,0.7);
+    transform:scale(0.9);
+    opacity:0;
+    transition:transform 420ms cubic-bezier(.2,.9,.3,1), opacity 420ms;
+  }
+  .overlay.show .overlay-card{
+    transform:scale(1);
+    opacity:1;
+    pointer-events:auto;
+  }
+  .overlay h2{
+    margin:0;
+    font-size:22px;
+    letter-spacing:2px;
+    color:var(--gold);
+  }
+  .overlay p{
+    margin:8px 0 0;
+    font-size:16px;
+    color:#f3f7f8;
+    font-weight:700;
+  }
+
+  /* Make sure overlay fits in small screens */
+  .canvas-wrap{position:relative;}
+  @media(min-width:420px){
+    .controls{gap:12px}
+  }
+</style>
 </head>
 <body>
-  <h1>🎂 Cake icon — thổi vào micro để tắt nến</h1>
+  <div class="wrap" role="main">
+    <header>
+      <h1>Make a wish — blow to extinguish</h1>
+      <p class="lead">One candle, microphone detection, and a short synthesized song. Tap "Enable mic" to start.</p>
+    </header>
 
-  <canvas id="c" width="420" height="520"></canvas>
+    <div class="canvas-wrap" id="canvasCard">
+      <!-- Canvas for the emoji-like cake -->
+      <canvas id="cakeCanvas" width="760" height="760" aria-label="Birthday cake illustration"></canvas>
 
-  <div class="panel">
-    <div class="row">
-      <button id="btnStart">🎤 Bật micro</button>
-      <button id="btnRelight" class="secondary" disabled>✨ Thắp lại nến</button>
+      <!-- Celebration overlay (hidden until blow-out) -->
+      <div class="overlay" id="overlay" aria-hidden="true">
+        <div class="overlay-card" id="overlayCard" role="status" aria-live="polite">
+          <h2>HAPPY BIRTHDAY</h2>
+          <p>LÊ VĂN LỘC</p>
+        </div>
+      </div>
     </div>
 
-    <div style="height:10px"></div>
-    <div class="status" id="status">Trạng thái: Chưa bật micro</div>
-
-    <div style="height:10px"></div>
-    <div class="row">
-      <label for="threshold">Độ nhạy thổi:</label>
-      <input id="threshold" type="range" min="10" max="70" value="28" />
-      <div class="small"><span id="thVal">28</span></div>
+    <!-- Controls -->
+    <div class="controls" aria-hidden="false">
+      <button id="enableMicBtn">Enable mic</button>
+      <button id="relightBtn" class="secondary" disabled>Relight candle</button>
     </div>
 
-    <div style="height:8px"></div>
-    <div class="row">
-      <label>Âm lượng:</label>
-      <div class="meter"><div id="bar"></div></div>
-      <div class="small" id="lvlText">0</div>
+    <!-- Sensitivity and meter -->
+    <div class="row" style="justify-content:space-around;max-width:340px;margin:0 auto;">
+      <label style="font-size:13px;color:var(--muted);min-width:76px;text-align:left;">Sensitivity</label>
+      <input id="sensitivity" class="slider" type="range" min="10" max="70" value="40" aria-label="sensitivity slider"/>
+      <div style="min-width:36px;font-weight:700;color:var(--muted);text-align:right;font-size:13px;" id="sVal">40</div>
     </div>
 
-    <div class="small" style="margin-top:8px">
-      Mẹo: để điện thoại cách miệng 10–20cm và thổi “phù” ~0.5–1s. Nếu khó tắt, kéo độ nhạy xuống thấp hơn.
+    <div class="meter" style="margin-top:6px;">
+      <div class="meter-bar" aria-hidden="true">
+        <div class="meter-fill" id="meterFill"></div>
+      </div>
+      <div class="meter-num" id="meterNum">0</div>
     </div>
+
+    <p style="font-size:12px;color:var(--muted);margin-top:12px;">Tip: move phone near mouth and blow — adjust sensitivity if it doesn't trigger.</p>
   </div>
 
 <script>
-(() => {
-  const canvas = document.getElementById('c');
-  const ctx = canvas.getContext('2d');
+/*
+  index.html
+  Single-file GitHub Pages project that:
+  - Draws a simple emoji-like birthday cake (Canvas) with one candle.
+  - Uses getUserMedia() + Web Audio API to measure microphone volume (RMS).
+  - Detects blowing when RMS exceeds threshold for a short duration -> extinguish flame.
+  - Plays synthesized "Happy Birthday" melody (Oscillator + Gain) after blow-out.
+  - UI: Enable mic, Relight candle, sensitivity slider (10-70), live volume meter + numeric display.
+  - Shows an overlay message when blown: "HAPPY BIRTHDAY" / "LÊ VĂN LỘC".
+  - Mobile-first, robust with comments.
+*/
 
-  const btnStart = document.getElementById('btnStart');
-  const btnRelight = document.getElementById('btnRelight');
-  const statusEl = document.getElementById('status');
-  const thresholdEl = document.getElementById('threshold');
-  const thValEl = document.getElementById('thVal');
-  const bar = document.getElementById('bar');
-  const lvlText = document.getElementById('lvlText');
+/* -------------------------
+   Visual / Canvas Drawing
+   ------------------------- */
+const canvas = document.getElementById('cakeCanvas');
+const ctx = canvas.getContext('2d', {alpha: true});
 
-  thValEl.textContent = thresholdEl.value;
-  thresholdEl.addEventListener('input', () => thValEl.textContent = thresholdEl.value);
+/* Use an internal resolution that's comfortably large and scales on CSS width */
+function resizeCanvas() {
+  // Keep square canvas; width from CSS
+  const displayWidth = Math.min(760, Math.floor(document.querySelector('.canvas-wrap').clientWidth * 2));
+  canvas.width = displayWidth;
+  canvas.height = displayWidth;
+  drawCake();
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
 
-  // candle state
-  const candle = { lit: true, flick: 0 };
+/* State */
+let candleLit = true;
 
-  // message overlay state
-  let showMsg = false;
-  let msgT = 0;
+/* Colors (masculine palette) */
+const colors = {
+  background: '#071126',
+  cakePrimary: '#0f6060', // teal-dark
+  cakeSecondary: '#153042', // charcoal
+  icing: '#0fb3aa', // teal accent for a subtle glow
+  plate: '#1f2a30',
+  candle: '#d9a441', // warm gold
+  wick: '#2b2b2b',
+  flameInner: '#fff1b8',
+  flameOuter: '#ffb84d',
+  shadow: 'rgba(2,6,23,0.6)'
+};
 
-  // audio
-  let audioCtx, analyser, micStream, data;
-  let rafId = null;
-  let blowScore = 0;
-  let lastLevel = 0;
+/* Draw a simple emoji-like cake with one candle */
+function drawCake() {
+  const w = canvas.width;
+  const h = canvas.height;
+  ctx.clearRect(0,0,w,h);
 
-  function roundRect(x,y,w,h,r){
-    ctx.beginPath();
-    ctx.moveTo(x+r, y);
-    ctx.arcTo(x+w, y, x+w, y+h, r);
-    ctx.arcTo(x+w, y+h, x, y+h, r);
-    ctx.arcTo(x, y+h, x, y, r);
-    ctx.arcTo(x, y, x+w, y, r);
-    ctx.closePath();
+  // Background subtle radial vignette
+  const g = ctx.createLinearGradient(0,0,0,h);
+  g.addColorStop(0, '#071126');
+  g.addColorStop(1, '#04101a');
+  ctx.fillStyle = g;
+  ctx.fillRect(0,0,w,h);
+
+  // Center coordinates
+  const cx = w/2;
+  const cy = h/2 + h*0.06;
+
+  // Draw plate
+  const plateW = w*0.6;
+  const plateH = h*0.08;
+  roundRect(ctx, cx-plateW/2, cy + h*0.22, plateW, plateH, plateH/2, colors.plate);
+  ctx.shadowColor = colors.shadow;
+  ctx.shadowBlur = 18;
+  ctx.shadowOffsetY = 6;
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // Cake base (two layers)
+  const cakeW = w*0.48;
+  const cakeH1 = h*0.16;
+  const cakeH2 = h*0.14;
+  // Bottom layer
+  roundRect(ctx, cx - cakeW/2, cy - cakeH2/2 + cakeH1*0.2, cakeW, cakeH2, 18, colors.cakeSecondary);
+  // Slight inner shine
+  const shine = ctx.createLinearGradient(0, cy - cakeH2/2, 0, cy + cakeH2/2);
+  shine.addColorStop(0, 'rgba(255,255,255,0.04)');
+  shine.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = shine;
+  ctx.fill();
+
+  // Upper layer
+  roundRect(ctx, cx - cakeW*0.78/2, cy - cakeH1 - cakeH2*0.1, cakeW*0.78, cakeH1, 14, colors.cakePrimary);
+  // Icing (rounded drips simplified)
+  const icingH = 14;
+  ctx.fillStyle = colors.icing;
+  ctx.beginPath();
+  const ix = cx - (cakeW*0.78)/2;
+  const iw = cakeW*0.78;
+  const iy = cy - cakeH1 - cakeH2*0.1;
+  ctx.moveTo(ix, iy + icingH/2);
+  // make a few semicircular drips across
+  const dripCount = 5;
+  for (let i=0;i<=dripCount;i++){
+    const px = ix + (i/dripCount)*iw;
+    const py = iy + icingH/2 + Math.sin(i*1.3)*6; // slight variation
+    ctx.quadraticCurveTo(px - iw/dripCount/2, py - 12, px, iy + icingH/2);
+  }
+  ctx.lineTo(ix+iw, iy+icingH);
+  ctx.lineTo(ix+iw, iy);
+  ctx.lineTo(ix, iy);
+  ctx.closePath();
+  ctx.fill();
+  // small highlight
+  ctx.globalAlpha = 0.12;
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(ix + iw*0.08, iy + 4, iw*0.5, 6);
+  ctx.globalAlpha = 1;
+
+  // Candle stem (centered)
+  const candleH = h*0.16;
+  const candleW = w*0.04;
+  const candleX = cx - candleW/2;
+  const candleY = iy - candleH + 8;
+  // stem
+  roundRect(ctx, candleX, candleY, candleW, candleH, 8, colors.candle);
+  // candle stripes for a bit of visual interest
+  ctx.fillStyle = 'rgba(0,0,0,0.06)';
+  for (let i=0;i<3;i++){
+    ctx.fillRect(candleX + candleW*0.14, candleY + i*(candleH/3)+6, candleW*0.7, 4);
+  }
+  // wick
+  ctx.fillStyle = colors.wick;
+  ctx.fillRect(cx - 1.5, candleY - 8, 3, 8);
+
+  // Flame (if lit)
+  if (candleLit) {
+    drawFlame(ctx, cx, candleY - 14, Math.max(10, w*0.02));
   }
 
-  function flame(x,y,t){
-    const wobble = Math.sin(t/10) * 2.2;
-    ctx.save();
-    ctx.translate(x+wobble, y);
+  // Tiny shadow under cake
+  const shadowGrad = ctx.createRadialGradient(cx, cy + cakeH2*0.9, 10, cx, cy + cakeH2*0.9, plateW*0.7);
+  shadowGrad.addColorStop(0, 'rgba(0,0,0,0.35)');
+  shadowGrad.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = shadowGrad;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy + cakeH2 + 12, cakeW*0.45, plateH*0.4, 0, 0, Math.PI*2);
+  ctx.fill();
 
-    // glow
-    ctx.globalAlpha = 0.22;
-    ctx.beginPath();
-    ctx.ellipse(0, -10, 18, 24, 0, 0, Math.PI*2);
-    ctx.fillStyle = "#ffb300";
-    ctx.fill();
-    ctx.globalAlpha = 1;
+  // Simple smiling face on cake to be "emoji-like"
+  const eyeY = iy + cakeH1*0.35;
+  const eyeXOffset = 28;
+  ctx.fillStyle = "#071126";
+  ctx.beginPath();
+  ctx.ellipse(cx - eyeXOffset, eyeY, 6, 8, 0, 0, Math.PI*2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(cx + eyeXOffset, eyeY, 6, 8, 0, 0, Math.PI*2);
+  ctx.fill();
+  // smile
+  ctx.strokeStyle = "#071126";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(cx, iy + cakeH1*0.6, 26, 0.15*Math.PI, 0.85*Math.PI);
+  ctx.stroke();
+}
 
-    // outer flame
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.quadraticCurveTo(14, -10, 6, -30);
-    ctx.quadraticCurveTo(0, -46, -6, -30);
-    ctx.quadraticCurveTo(-14, -10, 0, 0);
-    ctx.closePath();
-    ctx.fillStyle = "#ff9a2f";
-    ctx.fill();
+/* Helper: rounded rectangle draw (path + fill) */
+function roundRect(ctx, x, y, w, h, r, fillStyle) {
+  ctx.beginPath();
+  const radius = Math.min(r, w/2, h/2);
+  ctx.moveTo(x + radius, y);
+  ctx.arcTo(x + w, y, x + w, y + h, radius);
+  ctx.arcTo(x + w, y + h, x, y + h, radius);
+  ctx.arcTo(x, y + h, x, y, radius);
+  ctx.arcTo(x, y, x + w, y, radius);
+  ctx.closePath();
+  ctx.fillStyle = fillStyle || '#000';
+  ctx.fill();
+}
 
-    // inner
-    ctx.beginPath();
-    ctx.moveTo(0, -3);
-    ctx.quadraticCurveTo(8, -12, 4, -26);
-    ctx.quadraticCurveTo(0, -36, -4, -26);
-    ctx.quadraticCurveTo(-8, -12, 0, -3);
-    ctx.closePath();
-    ctx.fillStyle = "#ffe08a";
-    ctx.fill();
+/* Draw stylized flame */
+function drawFlame(ctx, x, y, size) {
+  // outer flame
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(Math.PI * -0.03);
+  const grad = ctx.createRadialGradient(0, -size*0.18, size*0.1, 0, 0, size*1.2);
+  grad.addColorStop(0, colors.flameInner);
+  grad.addColorStop(0.6, colors.flameOuter);
+  grad.addColorStop(1, 'rgba(255,120,40,0.06)');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.moveTo(0, -size*1.2);
+  ctx.bezierCurveTo(size*0.8, -size*0.6, size*0.2, size*0.8, 0, size*0.9);
+  ctx.bezierCurveTo(-size*0.2, size*0.8, -size*0.8, -size*0.6, 0, -size*1.2);
+  ctx.closePath();
+  ctx.fill();
 
-    ctx.restore();
-  }
+  // inner bright core
+  ctx.fillStyle = colors.flameInner;
+  ctx.beginPath();
+  ctx.moveTo(0, -size*0.9);
+  ctx.bezierCurveTo(size*0.35, -size*0.45, size*0.1, size*0.5, 0, size*0.56);
+  ctx.bezierCurveTo(-size*0.1, size*0.5, -size*0.35, -size*0.45, 0, -size*0.9);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
 
-  // 🎂 simple cake icon drawing (clean, emoji-like)
-  function drawCakeIcon(t){
-    ctx.clearRect(0,0,420,520);
+/* -------------------------
+   Audio / Microphone Setup
+   ------------------------- */
+let audioCtx = null;
+let analyser = null;
+let mediaStream = null;
+let rafId = null;
+let dataArray = null;
 
-    // soft background dots
-    for (let i=0;i<22;i++){
-      const x=(i*53)%420, y=(i*79)%520;
-      ctx.globalAlpha=0.12;
-      ctx.beginPath();
-      ctx.arc(x+12,y+16, 3+(i%3), 0, Math.PI*2);
-      ctx.fillStyle=["#ff4fa3","#7c5cff","#00c2ff","#ffb300"][i%4];
-      ctx.fill();
-    }
-    ctx.globalAlpha=1;
+/* UI elements */
+const enableBtn = document.getElementById('enableMicBtn');
+const relightBtn = document.getElementById('relightBtn');
+const sensitivityInput = document.getElementById('sensitivity');
+const sVal = document.getElementById('sVal');
+const meterFill = document.getElementById('meterFill');
+const meterNum = document.getElementById('meterNum');
+const overlay = document.getElementById('overlay');
+const overlayCard = document.getElementById('overlayCard');
 
-    // Plate shadow
-    ctx.globalAlpha = 0.14;
-    ctx.beginPath();
-    ctx.ellipse(210, 440, 160, 22, 0, 0, Math.PI*2);
-    ctx.fillStyle = "#000";
-    ctx.fill();
-    ctx.globalAlpha = 1;
+/* Sensitivity initial */
+sVal.textContent = sensitivityInput.value;
 
-    // Plate
-    ctx.beginPath();
-    ctx.ellipse(210, 430, 170, 26, 0, 0, Math.PI*2);
-    ctx.fillStyle = "#f2f2f2";
-    ctx.fill();
-    ctx.lineWidth=2;
-    ctx.strokeStyle="rgba(0,0,0,.06)";
-    ctx.stroke();
+/* Map slider value (10-70) to RMS threshold: higher slider => more sensitive (lower threshold)
+   threshold = (80 - s) * 0.001 -> s=70 => 0.01 (sensitive); s=10 => 0.07 (less sensitive)
+*/
+function sliderToThreshold(s) {
+  return (80 - s) * 0.001;
+}
 
-    // Cake base (golden)
-    ctx.fillStyle = "#f6c56f";
-    roundRect(105, 260, 210, 140, 36);
-    ctx.fill();
+/* Blowing detection state */
+let blowCounter = 0;
+const requiredFrames = 8; // frames above threshold (~8 frames at 60fps => ~130ms)
+let lastRms = 0;
 
-    // Cake side highlight
-    ctx.globalAlpha = 0.18;
-    ctx.fillStyle = "#fff";
-    roundRect(118, 275, 34, 110, 18);
-    ctx.fill();
-    ctx.globalAlpha = 1;
-
-    // Cream band (white)
-    ctx.fillStyle = "#fff6ef";
-    roundRect(105, 315, 210, 46, 22);
-    ctx.fill();
-
-    // Sprinkles (tiny)
-    const spr = [
-      [140,335],[160,344],[178,330],[198,346],[220,332],[240,342],[262,334],[282,346]
-    ];
-    for(let i=0;i<spr.length;i++){
-      ctx.save();
-      ctx.translate(spr[i][0], spr[i][1]);
-      ctx.rotate((i*18)*Math.PI/180);
-      ctx.fillStyle = ["#ff4fa3","#7c5cff","#00c2ff","#ffb300"][i%4];
-      roundRect(-7,-2,14,4,2);
-      ctx.fill();
-      ctx.restore();
-    }
-
-    // Chocolate top
-    ctx.fillStyle = "#8b4f3a";
-    roundRect(90, 230, 240, 56, 28);
-    ctx.fill();
-
-    // Chocolate drips (simple scallops)
-    ctx.fillStyle = "#7a4433";
-    const dripY = 260;
-    for(let i=0;i<7;i++){
-      ctx.beginPath();
-      ctx.ellipse(120 + i*38, dripY, 18, 14, 0, 0, Math.PI*2);
-      ctx.fill();
-    }
-
-    // Candle (1)
-    // candle body
-    ctx.fillStyle="#ffe7a8";
-    roundRect(200, 165, 20, 70, 10);
-    ctx.fill();
-
-    // candle stripe
-    ctx.globalAlpha=0.35;
-    ctx.fillStyle="#ff4fa3";
-    for(let i=0;i<4;i++){
-      roundRect(202, 175 + i*14, 16, 6, 4);
-      ctx.fill();
-    }
-    ctx.globalAlpha=1;
-
-    // wick
-    ctx.strokeStyle="#1a1a1a";
-    ctx.lineWidth=4;
-    ctx.beginPath();
-    ctx.moveTo(210, 160);
-    ctx.lineTo(210, 145);
-    ctx.stroke();
-
-    // flame if lit
-    if (candle.lit){
-      candle.flick = t;
-      flame(210, 138, t);
-    }
-
-    // Title
-    ctx.fillStyle="rgba(0,0,0,.72)";
-    ctx.font="900 22px system-ui";
-    ctx.textAlign="center";
-    ctx.fillText("🎂", 210, 70);
-    ctx.font="800 18px system-ui";
-    ctx.fillText("Blow to blow out", 210, 96);
-  }
-
-  function drawOverlay(){
-    msgT += 1;
-    // dim
-    ctx.globalAlpha = 0.62;
-    ctx.fillStyle="#000";
-    ctx.fillRect(0,0,420,520);
-    ctx.globalAlpha = 1;
-
-    // pop animation
-    const pop = Math.min(1, msgT/16);
-    const s = 0.92 + pop*0.08;
-
-    ctx.save();
-    ctx.translate(210, 250);
-    ctx.scale(s, s);
-
-    // card shadow
-    ctx.globalAlpha=0.22;
-    ctx.beginPath();
-    ctx.ellipse(0, 120, 140, 20, 0, 0, Math.PI*2);
-    ctx.fillStyle="#000"; ctx.fill();
-    ctx.globalAlpha=1;
-
-    // card
-    ctx.fillStyle="#fff";
-    roundRect(-160, -70, 320, 160, 22);
-    ctx.fill();
-    ctx.strokeStyle="rgba(0,0,0,.08)";
-    ctx.lineWidth=2;
-    ctx.stroke();
-
-    ctx.textAlign="center";
-    ctx.fillStyle="#111";
-    ctx.font="950 20px system-ui";
-    ctx.fillText("HAPPY BIRTHDAY", 0, -12);
-
-    ctx.fillStyle="#ff2f92";
-    ctx.font="1000 22px system-ui";
-    ctx.fillText("LÊ VĂN LỘC", 0, 22);
-
-    ctx.fillStyle="rgba(0,0,0,.55)";
-    ctx.font="700 12px system-ui";
-    ctx.fillText("✨ Chúc mừng sinh nhật! ✨", 0, 54);
-
-    ctx.restore();
-  }
-
-  function relight(){
-    candle.lit = true;
-    showMsg = false;
-    msgT = 0;
-    blowScore = 0;
-    statusEl.textContent = "Trạng thái: Nến đã được thắp lại ✨";
-  }
-  btnRelight.addEventListener('click', relight);
-
-  function rmsFromTimeDomain(arr){
-    let sum = 0;
-    for (let i=0;i<arr.length;i++){
-      const v = (arr[i]-128)/128;
-      sum += v*v;
-    }
-    return Math.sqrt(sum/arr.length);
-  }
-
-  function frame(){
-    const t = performance.now()/16;
-    drawCakeIcon(t);
-
-    if (showMsg) drawOverlay();
-
-    if (analyser && data && !showMsg){
-      analyser.getByteTimeDomainData(data);
-      const rms = rmsFromTimeDomain(data);
-      const level = Math.min(100, Math.max(0, rms * 150));
-
-      bar.style.width = level + "%";
-      lvlText.textContent = level.toFixed(0);
-
-      const threshold = Number(thresholdEl.value);
-
-      if (level > threshold){
-        const delta = Math.max(0, level - lastLevel);
-        blowScore += 1.0 + (delta < 10 ? 0.5 : 0.15);
-      } else {
-        blowScore *= 0.92;
-      }
-      lastLevel = level;
-
-      // single candle: easier to blow out
-      if (candle.lit && blowScore > 12){
-        candle.lit = false;
-        blowScore = 0;
-        statusEl.textContent = "Trạng thái: Nến đã tắt! 🎉";
-        showMsg = true;
-        msgT = 0;
-      }
-    }
-
-    rafId = requestAnimationFrame(frame);
-  }
-
-  async function startMic(){
-    try{
-      statusEl.textContent = "Trạng thái: Đang xin quyền micro...";
-      micStream = await navigator.mediaDevices.getUserMedia({
-        audio: { echoCancellation:true, noiseSuppression:true, autoGainControl:true }
-      });
-
+/* When user presses "Enable mic" */
+enableBtn.addEventListener('click', async () => {
+  // Create AudioContext on user gesture to satisfy autoplay policies
+  if (!audioCtx) {
+    try {
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const src = audioCtx.createMediaStreamSource(micStream);
-      analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 2048;
-      data = new Uint8Array(analyser.fftSize);
-      src.connect(analyser);
-
-      btnStart.disabled = true;
-      btnRelight.disabled = false;
-      statusEl.textContent = "Trạng thái: Micro đã bật ✅ Hãy thổi vào micro!";
-      if (!rafId) frame();
-    } catch(e){
-      console.error(e);
-      statusEl.textContent = "Trạng thái: Không bật được micro ❌ (hãy dùng HTTPS/cho phép quyền micro)";
+    } catch (err) {
+      alert('Web Audio API is not supported in this browser.');
+      return;
     }
   }
-  btnStart.addEventListener('click', startMic);
 
-  // initial draw
-  drawCakeIcon(0);
-  frame();
-})();
+  // Resume audio context (some browsers require resume on gesture)
+  try {
+    await audioCtx.resume();
+  } catch (e) {
+    // ignore
+  }
+
+  // Request microphone
+  try {
+    mediaStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+  } catch (err) {
+    alert('Microphone access denied or not available.');
+    return;
+  }
+
+  // Create analyser and connect
+  analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 2048;
+  const source = audioCtx.createMediaStreamSource(mediaStream);
+  source.connect(analyser);
+
+  dataArray = new Uint8Array(analyser.fftSize);
+
+  enableBtn.disabled = true;
+  enableBtn.textContent = 'Mic enabled';
+  relightBtn.disabled = false;
+
+  // Play a tiny silent sound to fully unlock audio on some browsers (safe since user gesture)
+  unlockAudio();
+
+  // Start monitoring loop
+  monitorAudio();
+});
+
+/* Unlock audio by scheduling a tiny silent buffer */
+function unlockAudio() {
+  try {
+    const buffer = audioCtx.createBuffer(1, 1, audioCtx.sampleRate);
+    const src = audioCtx.createBufferSource();
+    src.buffer = buffer;
+    const g = audioCtx.createGain();
+    g.gain.value = 0;
+    src.connect(g).connect(audioCtx.destination);
+    src.start(0);
+  } catch (e) {
+    // ignore
+  }
+}
+
+/* Monitor microphone volume using analyser time-domain data */
+function monitorAudio() {
+  if (!analyser) return;
+
+  function update() {
+    analyser.getByteTimeDomainData(dataArray);
+    // compute RMS from time-domain data (normalized -1..1)
+    let sum = 0;
+    for (let i = 0; i < dataArray.length; i++) {
+      const v = (dataArray[i] - 128) / 128;
+      sum += v * v;
+    }
+    const rms = Math.sqrt(sum / dataArray.length);
+    lastRms = rms;
+
+    // Update meter (scale to 0-100 using a reasonable cap)
+    const cap = 0.08; // value where meter reads 100%
+    const pct = Math.min(1, rms / cap);
+    meterFill.style.width = (pct * 100) + '%';
+    meterNum.textContent = String(Math.round(pct * 100));
+
+    // Blow detection: check if RMS > threshold for a short time
+    const threshold = sliderToThreshold(Number(sensitivityInput.value));
+    if (rms > threshold) {
+      blowCounter++;
+      if (blowCounter >= requiredFrames && candleLit) {
+        // Detected a blow
+        extinguishCandle();
+      }
+    } else {
+      blowCounter = 0;
+    }
+
+    // Continue
+    rafId = requestAnimationFrame(update);
+  }
+
+  // Start immediately
+  update();
+}
+
+/* -------------------------
+   Extinguish & Melody
+   ------------------------- */
+function extinguishCandle() {
+  candleLit = false;
+  drawCake();
+
+  // Stop monitoring briefly to avoid retriggering while playing
+  if (rafId) {
+    cancelAnimationFrame(rafId);
+    rafId = null;
+  }
+
+  // Show overlay with animation
+  overlay.classList.add('show');
+  overlay.setAttribute('aria-hidden', 'false');
+
+  // Play synthesized "Happy Birthday" melody
+  try {
+    playHappyBirthday();
+  } catch (e) {
+    console.warn('Could not play melody:', e);
+  }
+
+  // After playing, continue monitoring (short delay to avoid immediate retrigger)
+  setTimeout(() => {
+    if (analyser && !rafId) monitorAudio();
+  }, 1200);
+}
+
+/* Relight candle (manual) */
+relightBtn.addEventListener('click', () => {
+  candleLit = true;
+  drawCake();
+  overlay.classList.remove('show');
+  overlay.setAttribute('aria-hidden', 'true');
+});
+
+/* -------------------------
+   Synthesis: Happy Birthday
+   ------------------------- */
+
+/* Utility: map note name to frequency (A4 = 440Hz) */
+function noteToFreq(note) {
+  // note like "C4", "G#4", "Bb3"
+  const noteRegex = /^([A-G])([#b]?)(\d)$/;
+  const m = noteRegex.exec(note);
+  if (!m) return 440;
+  const pitchClass = m[1];
+  const accidental = m[2];
+  const octave = parseInt(m[3], 10);
+  const semisFromA4 = {
+    'C': -9, 'D': -7, 'E': -5, 'F': -4, 'G': -2, 'A': 0, 'B': 2
+  }[pitchClass];
+  let semitone = semisFromA4;
+  if (accidental === '#') semitone++;
+  if (accidental === 'b') semitone--;
+  // adjust for octave
+  semitone += (octave - 4) * 12;
+  return 440 * Math.pow(2, semitone / 12);
+}
+
+/* Melody data: Happy Birthday in C major (one verse).
+   Each entry: [note, durationInBeats], where beat length controlled by tempo.
+*/
+const melody = [
+  ['G4', 1], ['G4', 1], ['A4', 2], ['G4', 2], ['C5', 2], ['B4', 4],
+  ['G4', 1], ['G4', 1], ['A4', 2], ['G4', 2], ['D5', 2], ['C5', 4],
+  // short bridge
+  ['G4', 1], ['G4', 1], ['G5', 2], ['E5', 2], ['C5', 2], ['B4', 2], ['A4', 4],
+  ['F5', 1], ['F5', 1], ['E5', 2], ['C5', 2], ['D5', 2], ['C5', 4]
+];
+
+/* Play melody using Oscillator + Gain notes scheduling */
+function playHappyBirthday() {
+  if (!audioCtx) return;
+  const now = audioCtx.currentTime;
+  const tempo = 160; // beats per minute (faster-ish for short pleasant)
+  const beatTime = 60 / tempo; // seconds per beat
+
+  const masterGain = audioCtx.createGain();
+  masterGain.gain.setValueAtTime(0.001, now);
+  masterGain.connect(audioCtx.destination);
+
+  // small fade-in
+  masterGain.gain.linearRampToValueAtTime(0.9, now + 0.02);
+
+  let t = now + 0.02;
+  melody.forEach(([note, beats], idx) => {
+    const duration = beats * beatTime;
+    // Use two oscillators slightly detuned for warmth
+    const osc1 = audioCtx.createOscillator();
+    const osc2 = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    const freq = noteToFreq(note);
+    osc1.type = 'sine';
+    osc2.type = 'triangle';
+    osc1.frequency.setValueAtTime(freq, t);
+    osc2.frequency.setValueAtTime(freq * 1.0025, t); // slight detune
+    // envelope
+    g.gain.setValueAtTime(0.0, t);
+    g.gain.linearRampToValueAtTime(0.8, t + 0.01);
+    g.gain.linearRampToValueAtTime(0.6, t + duration*0.6);
+    g.gain.exponentialRampToValueAtTime(0.001, t + duration - 0.02);
+
+    osc1.connect(g);
+    osc2.connect(g);
+    g.connect(masterGain);
+
+    osc1.start(t);
+    osc2.start(t);
+    osc1.stop(t + duration);
+    osc2.stop(t + duration);
+
+    t += duration + (beatTime * 0.06); // tiny gap between notes
+  });
+
+  // master fade-out at end
+  masterGain.gain.setValueAtTime(0.001, t + 0.05);
+  // disconnect after finished
+  setTimeout(()=> {
+    try { masterGain.disconnect(); } catch(e){}
+  }, (t - now + 0.2) * 1000);
+}
+
+/* -------------------------
+   UI: slider updates and accessibility
+   ------------------------- */
+sensitivityInput.addEventListener('input', () => {
+  sVal.textContent = sensitivityInput.value;
+});
+
+/* Accessibility: keyboard toggling for canvas - tapping canvas toggles relight if blown */
+canvas.addEventListener('click', () => {
+  // If already blown, clicking relights
+  if (!candleLit) {
+    candleLit = true;
+    overlay.classList.remove('show');
+    overlay.setAttribute('aria-hidden', 'true');
+    drawCake();
+  }
+});
+
+/* Draw initially */
+drawCake();
+
+/* Clean up on page hide */
+window.addEventListener('pagehide', () => {
+  if (rafId) cancelAnimationFrame(rafId);
+  if (mediaStream) {
+    mediaStream.getTracks().forEach(t => t.stop());
+  }
+  if (audioCtx && audioCtx.close) audioCtx.close();
+});
 </script>
 </body>
 </html>
