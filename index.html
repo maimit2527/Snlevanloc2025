@@ -1,425 +1,620 @@
 <!doctype html>
-<html lang="vi">
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Cake 🎂</title>
-  <style>
-    body{
-      margin:0; padding:16px;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      min-height:100vh;
-      display:flex; flex-direction:column; align-items:center; gap:12px;
-      background: radial-gradient(circle at top, #0b1320, #07101a);
-      color:#eaf2ff;
-    }
-    h1{ margin:6px 0 0; font-size:18px; text-align:center; font-weight:800; }
-    canvas{
-      width:min(92vw, 420px);
-      height:auto;
-      border-radius:18px;
-      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
-      box-shadow:0 18px 45px rgba(0,0,0,.35);
-      border:1px solid rgba(255,255,255,.10);
-    }
-    .panel{
-      width:min(92vw, 420px);
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.12);
-      border-radius:16px;
-      padding:12px;
-      box-shadow:0 12px 30px rgba(0,0,0,.25);
-      backdrop-filter: blur(6px);
-    }
-    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-    button{
-      border:0; border-radius:14px;
-      padding:10px 12px;
-      font-weight:900; cursor:pointer;
-      background:#11b5a4; color:#061018;
-      box-shadow:0 12px 26px rgba(17,181,164,.20);
-    }
-    button.secondary{
-      background:#1f2a3a; color:#eaf2ff;
-      box-shadow:0 12px 26px rgba(0,0,0,.25);
-      border:1px solid rgba(255,255,255,.10);
-    }
-    button:disabled{ opacity:.55; cursor:not-allowed; }
-    label{ font-size:13px; color:#cfe0ff; }
-    input[type="range"]{ width:220px; }
-    .meter{ height:10px; border-radius:999px; overflow:hidden; background:rgba(255,255,255,.10); flex:1; min-width:150px; }
-    .meter > div{ height:100%; width:0%; background:#f5c451; }
-    .status{ font-size:13px; font-weight:800; color:#eaf2ff; }
-    .small{ font-size:12px; color:#b9cff7; }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Birthday Candle</title>
+<style>
+  :root{
+    --charcoal:#2b2b2b;
+    --navy:#0b3d91;
+    --teal:#0f4c4c;
+    --gold:#d4af37;
+    --bg:#0f1720;
+    --card:#111418;
+    --glass: rgba(255,255,255,0.04);
+  }
+  html,body{
+    height:100%;
+    margin:0;
+    background:linear-gradient(180deg,var(--bg),#081018);
+    color: #e6eef8;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    box-sizing:border-box;
+  }
+  .wrap{
+    width:100%;
+    max-width:420px;
+    text-align:center;
+  }
+  .card{
+    background: linear-gradient(180deg,var(--card),#0b1014);
+    border-radius:14px;
+    padding:18px;
+    box-shadow: 0 6px 24px rgba(2,6,23,0.6);
+    border:1px solid rgba(255,255,255,0.03);
+  }
+  canvas{
+    width:100%;
+    max-width:360px;
+    height:auto;
+    display:block;
+    margin:8px auto 14px;
+    touch-action:none;
+  }
+  .controls{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    align-items:center;
+    margin-top:8px;
+  }
+  .full{
+    grid-column:1 / -1;
+  }
+  button{
+    background:var(--navy);
+    color:white;
+    border:0;
+    padding:10px 12px;
+    border-radius:8px;
+    font-weight:700;
+    letter-spacing:0.6px;
+    box-shadow: 0 4px 10px rgba(11,61,145,0.18);
+    cursor:pointer;
+  }
+  button.secondary{
+    background:var(--teal);
+    box-shadow: 0 4px 10px rgba(15,76,76,0.18);
+  }
+  .row{
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+  label{
+    font-size:13px;
+    color:#cfe3ff;
+    display:block;
+    text-align:left;
+  }
+  input[type="range"]{
+    -webkit-appearance:none;
+    appearance:none;
+    height:28px;
+    background:transparent;
+  }
+  input[type="range"]::-webkit-slider-runnable-track{
+    height:6px;
+    background:linear-gradient(90deg,var(--glass),rgba(255,255,255,0.02));
+    border-radius:6px;
+  }
+  input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:18px;height:18px;border-radius:50%;
+    background:var(--gold);
+    margin-top:-6px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.5);
+  }
+  .meter{
+    width:100%;
+    height:12px;
+    background:rgba(255,255,255,0.04);
+    border-radius:8px;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+  }
+  .meter-fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,var(--gold),#ffd46a);
+    border-radius:8px 0 0 8px;
+    transition:width 0.08s linear;
+  }
+  .small{
+    font-size:13px;color:#cfe3ff;
+  }
+  .meter-wrap{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    margin-top:6px;
+  }
+  .value{
+    min-width:48px;
+    text-align:right;
+    font-weight:700;
+    color:var(--gold);
+    font-size:13px;
+  }
+
+  /* Overlay after blown */
+  .overlay{
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    pointer-events:none;
+  }
+  .celebrate{
+    background:rgba(11,16,20,0.88);
+    border:2px solid rgba(255,255,255,0.04);
+    color:var(--gold);
+    padding:28px 22px;
+    border-radius:12px;
+    transform-origin:center;
+    text-align:center;
+    box-shadow: 0 12px 40px rgba(2,6,23,0.8);
+    opacity:0;
+    transform:translateY(20px) scale(0.96);
+    transition:opacity 420ms cubic-bezier(.2,.9,.2,1), transform 420ms cubic-bezier(.2,.9,.2,1);
+    pointer-events:auto;
+    max-width:90%;
+  }
+  .celebrate.show{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+  .celebrate h1{
+    margin:0;
+    font-size:22px;
+    letter-spacing:2px;
+    color:#eaf4ff;
+    font-weight:900;
+    line-height:1;
+  }
+  .celebrate p{
+    margin:10px 0 0;
+    font-size:20px;
+    font-weight:900;
+    letter-spacing:1.8px;
+    color:var(--gold);
+  }
+
+  /* small footer */
+  .help{
+    margin-top:12px;
+    font-size:12px;
+    color:#9fb6e6;
+  }
+
+  @media(min-width:600px){
+    .celebrate h1{font-size:26px;}
+    .celebrate p{font-size:28px;}
+  }
+
+  /* subtle focus */
+  button:focus, input[type="range"]:focus{outline:3px solid rgba(212,175,55,0.12);}
+</style>
 </head>
 <body>
-  <h1>🎂 Simple Cake — blow into mic to blow out the candle</h1>
+<div class="wrap">
+  <div class="card" role="main" aria-labelledby="title">
+    <h2 id="title" style="margin:0 0 8px;font-size:16px;color:#dbefff;">Blow Out the Candle</h2>
+    <canvas id="canvas" width="720" height="540" aria-label="Birthday cake with candle"></canvas>
 
-  <canvas id="c" width="420" height="520"></canvas>
+    <div class="controls" style="margin-top:12px;">
+      <button id="micBtn" class="full">Enable microphone</button>
+      <button id="relightBtn" class="secondary full" style="display:none;">Relight candle</button>
 
-  <div class="panel">
-    <div class="row">
-      <button id="btnStart">🎤 Enable mic</button>
-      <button id="btnRelight" class="secondary" disabled>✨ Relight</button>
+      <div class="full" style="margin-top:4px;">
+        <label for="sensitivity">Sensitivity <span id="sensVal" style="float:right;color:var(--gold);font-weight:800">40</span></label>
+        <input id="sensitivity" type="range" min="10" max="70" value="40" />
+      </div>
+
+      <div class="full meter-wrap" style="margin-top:4px;">
+        <div style="flex:1;">
+          <label class="small">Live volume</label>
+          <div class="meter" aria-hidden="true">
+            <div id="meterFill" class="meter-fill"></div>
+          </div>
+        </div>
+        <div class="value" id="volVal">0</div>
+      </div>
+
     </div>
 
-    <div style="height:10px"></div>
-    <div class="status" id="status">Status: mic is OFF</div>
-
-    <div style="height:10px"></div>
-    <div class="row">
-      <label for="threshold">Sensitivity:</label>
-      <input id="threshold" type="range" min="10" max="70" value="28" />
-      <div class="small"><span id="thVal">28</span></div>
-    </div>
-
-    <div style="height:8px"></div>
-    <div class="row">
-      <label>Volume:</label>
-      <div class="meter"><div id="bar"></div></div>
-      <div class="small" id="lvlText">0</div>
-    </div>
-
-    <div class="small" style="margin-top:8px">
-      Tip: hold the phone 10–20cm away and blow for ~0.5–1s. If it’s hard, lower Sensitivity.
-    </div>
+    <div class="help">Tip: Tap "Enable microphone" then blow gently at your device's mic to extinguish the flame.</div>
   </div>
+</div>
+
+<div class="overlay" id="overlay" aria-hidden="true">
+  <div class="celebrate" id="celebrate">
+    <h1>HAPPY BIRTHDAY</h1>
+    <p>LÊ VĂN LỘC</p>
+  </div>
+</div>
 
 <script>
-(() => {
-  const canvas = document.getElementById('c');
+(function(){
+  const canvas = document.getElementById('canvas');
   const ctx = canvas.getContext('2d');
-
-  const btnStart = document.getElementById('btnStart');
-  const btnRelight = document.getElementById('btnRelight');
-  const statusEl = document.getElementById('status');
-  const thresholdEl = document.getElementById('threshold');
-  const thValEl = document.getElementById('thVal');
-  const bar = document.getElementById('bar');
-  const lvlText = document.getElementById('lvlText');
-
-  thValEl.textContent = thresholdEl.value;
-  thresholdEl.addEventListener('input', () => thValEl.textContent = thresholdEl.value);
-
-  // --- state
-  let candleLit = true;
-  let showMsg = false;
-  let msgT = 0;
-
-  // --- audio (mic)
-  let audioCtx, analyser, micStream, data;
-  let blowScore = 0;
-  let lastLevel = 0;
-
-  // --- audio (music)
-  let musicPlaying = false;
-
-  function roundRect(x,y,w,h,r){
-    ctx.beginPath();
-    ctx.moveTo(x+r,y);
-    ctx.arcTo(x+w,y,x+w,y+h,r);
-    ctx.arcTo(x+w,y+h,x,y+h,r);
-    ctx.arcTo(x,y+h,x,y,r);
-    ctx.arcTo(x,y,x+w,y,r);
-    ctx.closePath();
+  // for crispness on high-DPI
+  function fitCanvas(){
+    const ratio = window.devicePixelRatio || 1;
+    const cssW = canvas.clientWidth;
+    const cssH = Math.round(cssW * (3/4)); // keep aspect
+    canvas.style.height = cssH + 'px';
+    canvas.width = Math.round(cssW * ratio);
+    canvas.height = Math.round(cssH * ratio);
+    ctx.setTransform(ratio,0,0,ratio,0,0);
   }
+  fitCanvas();
+  window.addEventListener('resize', fitCanvas);
 
-  function flame(x,y,t){
-    const wobble = Math.sin(t/10)*2;
-    ctx.save();
-    ctx.translate(x+wobble,y);
-    // glow
-    ctx.globalAlpha = 0.20;
-    ctx.beginPath(); ctx.ellipse(0,-6,16,22,0,0,Math.PI*2);
-    ctx.fillStyle = "#f5c451"; ctx.fill();
-    ctx.globalAlpha = 1;
-    // outer
-    ctx.beginPath();
-    ctx.moveTo(0,0);
-    ctx.quadraticCurveTo(12,-10,6,-28);
-    ctx.quadraticCurveTo(0,-44,-6,-28);
-    ctx.quadraticCurveTo(-12,-10,0,0);
-    ctx.closePath();
-    ctx.fillStyle="#ff9c2a"; ctx.fill();
-    // inner
-    ctx.beginPath();
-    ctx.moveTo(0,-3);
-    ctx.quadraticCurveTo(7,-12,3,-24);
-    ctx.quadraticCurveTo(0,-34,-3,-24);
-    ctx.quadraticCurveTo(-7,-12,0,-3);
-    ctx.closePath();
-    ctx.fillStyle="#ffe6a8"; ctx.fill();
-    ctx.restore();
-  }
+  // Colors
+  const C = {
+    charcoal:'#2b2b2b',
+    navy:'#0b3d91',
+    teal:'#0f4c4c',
+    gold:'#d4af37',
+    plate:'#111418'
+  };
 
-  function drawCake(t){
-    ctx.clearRect(0,0,420,520);
+  let flameOn = true;
+  let flickerSeed = Math.random()*1000;
+  let lastFrame = 0;
 
-    // subtle stars
-    ctx.globalAlpha = 0.20;
-    for(let i=0;i<18;i++){
-      const x = (i*59)%420;
-      const y = (i*97)%520;
-      ctx.beginPath();
-      ctx.arc(x+10,y+12, 2+(i%2), 0, Math.PI*2);
-      ctx.fillStyle = ["#11b5a4","#f5c451","#9bbcff","#ffffff"][i%4];
-      ctx.fill();
-    }
-    ctx.globalAlpha = 1;
+  function draw(){
+    const w = canvas.clientWidth;
+    const h = canvas.clientHeight;
+    ctx.clearRect(0,0,w,h);
 
+    // background simple
     // plate shadow
-    ctx.globalAlpha=0.22;
-    ctx.beginPath(); ctx.ellipse(210, 440, 160, 22, 0, 0, Math.PI*2);
-    ctx.fillStyle="#000"; ctx.fill();
-    ctx.globalAlpha=1;
+    const cx = w/2;
+    const cakeW = Math.min(260, w*0.65);
+    const cakeH = cakeW * 0.62;
+    const plateW = cakeW*1.25;
+    const plateH = 18;
+    const cakeX = cx - cakeW/2;
+    const cakeY = h*0.52 - cakeH/2;
 
-    // plate
-    ctx.beginPath(); ctx.ellipse(210, 430, 170, 26, 0, 0, Math.PI*2);
-    ctx.fillStyle="#0f2434"; ctx.fill();
-    ctx.strokeStyle="rgba(255,255,255,.12)";
-    ctx.lineWidth=2; ctx.stroke();
-
-    // cake body (emoji-like)
-    ctx.fillStyle="#f3c07a"; // warm gold
-    roundRect(105, 260, 210, 140, 36);
+    // draw plate
+    ctx.beginPath();
+    ctx.fillStyle = C.plate;
+    roundRect(ctx, cx - plateW/2, cakeY + cakeH + 8, plateW, plateH, plateH/2);
     ctx.fill();
 
-    // cream band
-    ctx.fillStyle="#e9f1ff";
-    roundRect(105, 315, 210, 46, 22);
+    // plate rim
+    ctx.beginPath();
+    ctx.fillStyle = 'rgba(255,255,255,0.02)';
+    roundRect(ctx, cx - plateW/2 + 6, cakeY + cakeH + 10, plateW-12, plateH-6, (plateH-6)/2);
     ctx.fill();
 
-    // sprinkles (minimal)
-    const spr = [[140,338],[165,330],[190,345],[215,333],[240,344],[265,334],[285,345]];
-    for(let i=0;i<spr.length;i++){
-      ctx.save();
-      ctx.translate(spr[i][0], spr[i][1]);
-      ctx.rotate((i*20)*Math.PI/180);
-      ctx.fillStyle = ["#11b5a4","#f5c451","#9bbcff"][i%3];
-      roundRect(-7,-2,14,4,2);
-      ctx.fill();
-      ctx.restore();
-    }
-
-    // top icing (charcoal)
-    ctx.fillStyle="#1f2a3a";
-    roundRect(90, 230, 240, 56, 28);
+    // cake body (rounded)
+    ctx.beginPath();
+    ctx.fillStyle = C.navy;
+    roundRect(ctx, cakeX, cakeY, cakeW, cakeH, 18);
     ctx.fill();
 
-    // drips
-    ctx.fillStyle="#182234";
-    const dripY=260;
-    for(let i=0;i<7;i++){
+    // icing - top rounded strip in teal
+    ctx.beginPath();
+    ctx.fillStyle = C.teal;
+    roundRect(ctx, cakeX+8, cakeY+8, cakeW-16, cakeH*0.36, 12);
+    ctx.fill();
+
+    // minimal decoration: three small charcoal dots
+    ctx.fillStyle = C.charcoal;
+    const decY = cakeY + cakeH*0.5;
+    for(let i=-1;i<=1;i++){
       ctx.beginPath();
-      ctx.ellipse(120+i*38, dripY, 18, 14, 0, 0, Math.PI*2);
+      ctx.arc(cx + i*44, decY, 6, 0, Math.PI*2);
       ctx.fill();
     }
 
-    // candle
-    ctx.fillStyle="#e9f1ff";
-    roundRect(200, 165, 20, 70, 10);
+    // candle - single centered
+    const candleW = 16;
+    const candleH = 60;
+    const candleX = cx - candleW/2;
+    const candleY = cakeY - candleH + 6;
+
+    // candle body (charcoal stripes)
+    ctx.beginPath();
+    ctx.fillStyle = C.gold;
+    roundRect(ctx, candleX+1, candleY, candleW-2, candleH, 6);
     ctx.fill();
-    ctx.globalAlpha=0.25;
-    ctx.fillStyle="#11b5a4";
-    for(let i=0;i<4;i++){ roundRect(202, 175+i*14, 16, 6, 4); ctx.fill(); }
-    ctx.globalAlpha=1;
+
+    // thin stripes on candle (navy)
+    ctx.fillStyle = 'rgba(11,61,145,0.12)';
+    for(let s=0;s<3;s++){
+      ctx.fillRect(candleX+3, candleY + 8 + s*16, candleW-6, 4);
+    }
 
     // wick
-    ctx.strokeStyle="#0b0f16";
-    ctx.lineWidth=4;
-    ctx.beginPath(); ctx.moveTo(210, 160); ctx.lineTo(210, 145); ctx.stroke();
+    ctx.beginPath();
+    ctx.fillStyle = C.charcoal;
+    ctx.fillRect(cx-1, candleY-6, 2,6);
 
-    // flame
-    if(candleLit) flame(210, 138, t);
-
-    // title
-    ctx.fillStyle="rgba(234,242,255,.92)";
-    ctx.font="900 22px system-ui";
-    ctx.textAlign="center";
-    ctx.fillText("🎂", 210, 70);
-    ctx.font="800 14px system-ui";
-    ctx.fillStyle="rgba(234,242,255,.65)";
-    ctx.fillText("Blow into mic to blow out the candle", 210, 96);
-
-    if(showMsg) drawOverlay();
-  }
-
-  function drawOverlay(){
-    msgT += 1;
-    ctx.globalAlpha=0.60;
-    ctx.fillStyle="#000";
-    ctx.fillRect(0,0,420,520);
-    ctx.globalAlpha=1;
-
-    const pop = Math.min(1, msgT/16);
-    const s = 0.92 + pop*0.08;
-
-    ctx.save();
-    ctx.translate(210, 250);
-    ctx.scale(s, s);
-
-    ctx.globalAlpha=0.26;
-    ctx.beginPath(); ctx.ellipse(0, 120, 140, 20, 0, 0, Math.PI*2);
-    ctx.fillStyle="#000"; ctx.fill();
-    ctx.globalAlpha=1;
-
-    ctx.fillStyle="#0f2434";
-    roundRect(-160, -70, 320, 160, 22);
-    ctx.fill();
-    ctx.strokeStyle="rgba(255,255,255,.14)";
-    ctx.lineWidth=2;
-    ctx.stroke();
-
-    ctx.textAlign="center";
-    ctx.fillStyle="#e9f1ff";
-    ctx.font="950 20px system-ui";
-    ctx.fillText("HAPPY BIRTHDAY", 0, -12);
-
-    ctx.fillStyle="#f5c451";
-    ctx.font="1000 22px system-ui";
-    ctx.fillText("LÊ VĂN LỘC", 0, 22);
-
-    ctx.fillStyle="rgba(233,241,255,.70)";
-    ctx.font="800 12px system-ui";
-    ctx.fillText("✨ Make a wish ✨", 0, 54);
-
-    ctx.restore();
-  }
-
-  // --- Happy Birthday melody (WebAudio)
-  function playHappyBirthday(){
-    if(!audioCtx || musicPlaying) return;
-    musicPlaying = true;
-
-    const A4 = 440;
-    const notes = {
-      C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23, G4: 392.00, A4: 440.00,
-      Bb4: 466.16, C5: 523.25, D5: 587.33, E5: 659.25
-    };
-
-    // Simple “Happy Birthday” (one verse) in C major
-    const seq = [
-      ["G4", 0.35], ["G4", 0.20], ["A4", 0.55], ["G4", 0.55], ["C5", 0.55], ["B b4".replace(" ",""), 0.95],
-      ["G4", 0.35], ["G4", 0.20], ["A4", 0.55], ["G4", 0.55], ["D5", 0.55], ["C5", 0.95],
-      ["G4", 0.35], ["G4", 0.20], ["G5".replace("G5","E5"), 0.55], ["C5", 0.55], ["C5", 0.55], ["B b4".replace(" ",""), 0.55], ["A4", 0.95],
-      ["F4", 0.35], ["F4", 0.20], ["E4", 0.55], ["C5", 0.55], ["D5", 0.55], ["C5", 1.15],
-    ];
-
-    const now = audioCtx.currentTime + 0.02;
-    let t = now;
-
-    const master = audioCtx.createGain();
-    master.gain.value = 0.18;
-    master.connect(audioCtx.destination);
-
-    for(const [n, dur] of seq){
-      const f = notes[n] || notes.C4;
-
-      const osc = audioCtx.createOscillator();
-      const g = audioCtx.createGain();
-
-      osc.type = "sine";
-      osc.frequency.value = f;
-
-      // ADSR-ish envelope
-      g.gain.setValueAtTime(0.0001, t);
-      g.gain.linearRampToValueAtTime(1.0, t + 0.02);
-      g.gain.linearRampToValueAtTime(0.35, t + dur - 0.05);
-      g.gain.linearRampToValueAtTime(0.0001, t + dur);
-
-      osc.connect(g);
-      g.connect(master);
-
-      osc.start(t);
-      osc.stop(t + dur);
-
-      t += dur;
+    // flame (simple teardrop) with flicker when on
+    if(flameOn){
+      const t = performance.now()/120 + flickerSeed;
+      const flick = 1 + Math.sin(t)*0.12 + Math.sin(t*1.7)*0.08;
+      const flameH = 26 * flick;
+      const flameW = 14 * flick;
+      drawFlame(cx, candleY-8, flameW, flameH);
     }
 
-    // reset flag after done
-    setTimeout(() => { musicPlaying = false; }, Math.ceil((t - now) * 1000) + 200);
+    // small glow when on
+    if(flameOn){
+      ctx.beginPath();
+      const grad = ctx.createRadialGradient(cx, candleY-8, 6, cx, candleY-8, 60);
+      grad.addColorStop(0, 'rgba(212,175,55,0.12)');
+      grad.addColorStop(1, 'rgba(212,175,55,0)');
+      ctx.fillStyle = grad;
+      ctx.arc(cx, candleY-8, 56, 0, Math.PI*2);
+      ctx.fill();
+    } else {
+      // faint smoke suggestion (rounded small grey blob)
+      ctx.beginPath();
+      ctx.fillStyle = 'rgba(255,255,255,0.03)';
+      ctx.ellipse(cx, candleY-18, 10, 6, -0.5, 0, Math.PI*2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(cx+8, candleY-32, 6, 4, -0.4, 0, Math.PI*2);
+      ctx.fill();
+    }
+
+    // small title indicator (optional)
+    lastFrame = requestAnimationFrame(draw);
   }
+
+  function roundRect(ctx,x,y,w,h,r){
+    const rad = r||6;
+    ctx.moveTo(x+rad,y);
+    ctx.lineTo(x+w-rad,y);
+    ctx.quadraticCurveTo(x+w,y,x+w,y+rad);
+    ctx.lineTo(x+w,y+h-rad);
+    ctx.quadraticCurveTo(x+w,y+h,x+w-rad,y+h);
+    ctx.lineTo(x+rad,y+h);
+    ctx.quadraticCurveTo(x,y+h,x,y+h-rad);
+    ctx.lineTo(x,y+rad);
+    ctx.quadraticCurveTo(x,y,x+rad,y);
+  }
+
+  function drawFlame(x,y,w,h){
+    // simple teardrop with two-tone (gold + lighter)
+    // main
+    ctx.beginPath();
+    const topX = x;
+    const topY = y - h*0.9;
+    ctx.moveTo(topX, topY);
+    ctx.quadraticCurveTo(x + w*0.6, y - h*0.2, x + w*0.2, y + h*0.2);
+    ctx.quadraticCurveTo(x + w*0.05, y + h*0.4, x, y);
+    ctx.quadraticCurveTo(x - w*0.05, y + h*0.4, x - w*0.2, y + h*0.2);
+    ctx.quadraticCurveTo(x - w*0.6, y - h*0.2, topX, topY);
+    ctx.closePath();
+    const g = ctx.createLinearGradient(x, y-h, x, y+h);
+    g.addColorStop(0,'#fff7d1');
+    g.addColorStop(0.4,C.gold);
+    g.addColorStop(1,'rgba(212,175,55,0.6)');
+    ctx.fillStyle = g;
+    ctx.fill();
+
+    // inner small highlight
+    ctx.beginPath();
+    ctx.moveTo(topX, topY+2);
+    ctx.quadraticCurveTo(x + w*0.28, y - h*0.12, x + w*0.08, y + h*0.14);
+    ctx.quadraticCurveTo(x + w*0.02, y + h*0.22, topX, y + h*0.06);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.fill();
+  }
+
+  // start draw loop
+  draw();
+
+  // Audio + mic logic
+  const micBtn = document.getElementById('micBtn');
+  const relightBtn = document.getElementById('relightBtn');
+  const sensitivity = document.getElementById('sensitivity');
+  const sensVal = document.getElementById('sensVal');
+  const meterFill = document.getElementById('meterFill');
+  const volVal = document.getElementById('volVal');
+  const overlay = document.getElementById('overlay');
+  const celebrate = document.getElementById('celebrate');
+
+  sensVal.textContent = sensitivity.value;
+
+  sensitivity.addEventListener('input', ()=>{ sensVal.textContent = sensitivity.value; });
+
+  let audioCtx = null;
+  let analyser = null;
+  let mediaStream = null;
+  let sourceNode = null;
+  let rafId = null;
+  let allowAudioPlay = false;
+  let lastHigh = 0;
+  let blowDetected = false;
+  let musicPlaying = false;
+  let scheduledNodes = [];
+  let userInteractedToEnable = false;
+
+  function ensureAudioContext(){
+    if(!audioCtx){
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+  }
+
+  async function initMic(){
+    try{
+      ensureAudioContext();
+      await audioCtx.resume();
+      mediaStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation:true, noiseSuppression:true }, video:false });
+      sourceNode = audioCtx.createMediaStreamSource(mediaStream);
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 1024;
+      analyser.smoothingTimeConstant = 0.2;
+      sourceNode.connect(analyser);
+      startMonitoring();
+      micBtn.textContent = 'Microphone enabled';
+      micBtn.disabled = true;
+      micBtn.style.opacity = '0.9';
+      relightBtn.style.display = 'inline-block';
+      allowAudioPlay = true;
+      userInteractedToEnable = true;
+    }catch(e){
+      console.warn('mic error', e);
+      alert('Microphone access was denied or is unavailable.');
+    }
+  }
+
+  micBtn.addEventListener('click', async ()=> {
+    // create/resume audio context & get mic
+    if(!audioCtx) ensureAudioContext();
+    // resume if suspended
+    try{
+      await audioCtx.resume();
+    }catch(e){}
+    await initMic();
+  });
+
+  relightBtn.addEventListener('click', ()=> {
+    relight();
+  });
 
   function relight(){
-    candleLit = true;
-    showMsg = false;
-    msgT = 0;
-    blowScore = 0;
-    statusEl.textContent = "Status: relit ✨";
-  }
-  btnRelight.addEventListener('click', relight);
-
-  function rmsFromTimeDomain(arr){
-    let sum = 0;
-    for(let i=0;i<arr.length;i++){
-      const v = (arr[i]-128)/128;
-      sum += v*v;
-    }
-    return Math.sqrt(sum/arr.length);
+    flameOn = true;
+    blowDetected = false;
+    overlay.setAttribute('aria-hidden','true');
+    celebrate.classList.remove('show');
+    stopMusic();
   }
 
-  function loop(){
-    const t = performance.now()/16;
-    drawCake(t);
+  function startMonitoring(){
+    const buffer = new Uint8Array(analyser.fftSize);
+    const minDuration = 80; // ms at least
+    const maxDuration = 1200; // don't accept extremely long
+    const thresholdFactor = ()=> (parseInt(sensitivity.value,10) / 100); // 0.1 - 0.7
 
-    if (analyser && data && !showMsg){
-      analyser.getByteTimeDomainData(data);
-      const rms = rmsFromTimeDomain(data);
-      const level = Math.min(100, Math.max(0, rms * 150));
-
-      bar.style.width = level + "%";
-      lvlText.textContent = level.toFixed(0);
-
-      const threshold = Number(thresholdEl.value);
-
-      if(level > threshold){
-        const delta = Math.max(0, level - lastLevel);
-        blowScore += 1.0 + (delta < 10 ? 0.5 : 0.2);
-      } else {
-        blowScore *= 0.92;
+    function step(){
+      analyser.getByteTimeDomainData(buffer);
+      // convert to [-1,1]
+      let sum = 0;
+      for(let i=0;i<buffer.length;i++){
+        const v = (buffer[i] - 128)/128;
+        sum += v*v;
       }
-      lastLevel = level;
+      const rms = Math.sqrt(sum / buffer.length);
+      const vol = Math.min(1, rms*3); // scale for display
+      const volPercent = Math.round(vol*100);
+      meterFill.style.width = (volPercent)+'%';
+      volVal.textContent = volPercent;
 
-      if(candleLit && blowScore > 12){
-        candleLit = false;
-        blowScore = 0;
-        statusEl.textContent = "Status: candle is OUT 🎉";
-        showMsg = true;
-        msgT = 0;
-        playHappyBirthday(); // music on blow-out
+      // detect blow: large short spike above threshold
+      const dynamicThreshold = thresholdFactor() * 0.65; // base
+      // We'll consider blowing as rms > dynamicThreshold
+      if(flameOn && !blowDetected){
+        if(rms > dynamicThreshold){
+          if(!lastHigh) lastHigh = performance.now();
+          else {
+            const dur = performance.now() - lastHigh;
+            if(dur > minDuration && dur < maxDuration){
+              // extra guard: ensure strong enough absolute
+              if(rms > 0.08){
+                // Consider blow
+                blowDetected = true;
+                extinguish();
+              }
+            }
+          }
+        } else {
+          lastHigh = 0;
+        }
       }
-    }
 
-    requestAnimationFrame(loop);
+      rafId = requestAnimationFrame(step);
+    }
+    if(rafId) cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(step);
   }
 
-  async function startMic(){
-    try{
-      statusEl.textContent = "Status: requesting mic permission...";
-      micStream = await navigator.mediaDevices.getUserMedia({
-        audio: { echoCancellation:true, noiseSuppression:true, autoGainControl:true }
-      });
-
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const src = audioCtx.createMediaStreamSource(micStream);
-      analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 2048;
-      data = new Uint8Array(analyser.fftSize);
-      src.connect(analyser);
-
-      btnStart.disabled = true;
-      btnRelight.disabled = false;
-      statusEl.textContent = "Status: mic is ON ✅ Blow!";
-    } catch(e){
-      console.error(e);
-      statusEl.textContent = "Status: mic failed ❌ (need HTTPS + allow mic)";
+  function extinguish(){
+    flameOn = false;
+    overlay.setAttribute('aria-hidden','false');
+    setTimeout(()=> celebrate.classList.add('show'), 40);
+    // play music only if user enabled mic (interaction)
+    if(allowAudioPlay && userInteractedToEnable){
+      playHappyBirthday();
     }
   }
-  btnStart.addEventListener('click', startMic);
 
-  // initial
-  loop();
+  // Music generation - Happy Birthday melody (simple)
+  const notes = {
+    'C4':261.63,'C#4':277.18,'D4':293.66,'D#4':311.13,'E4':329.63,'F4':349.23,'F#4':369.99,'G4':392.00,'G#4':415.30,'A4':440.00,'A#4':466.16,'B4':493.88,
+    'C5':523.25,'D5':587.33,'E5':659.25,'F5':698.46,'G5':783.99
+  };
+  // sequence: note, length in beats (relative), pause flag optional
+  // tempo control
+  const melody = [
+    ['G4',1], ['G4',1], ['A4',2], ['G4',2], ['C5',2], ['B4',4],
+    ['G4',1], ['G4',1], ['A4',2], ['G4',2], ['D5',2], ['C5',4],
+    ['G4',1], ['G4',1], ['G5',2], ['E5',2], ['C5',2], ['B4',2], ['A4',4],
+    ['F5',1], ['F5',1], ['E5',2], ['C5',2], ['D5',2], ['C5',4]
+  ];
+
+  function stopMusic(){
+    scheduledNodes.forEach(n=>{
+      try{ n.osc.stop(0); }catch(e){}
+      try{ n.gain.disconnect(); }catch(e){}
+    });
+    scheduledNodes = [];
+    musicPlaying = false;
+  }
+
+  function playHappyBirthday(){
+    if(!audioCtx) ensureAudioContext();
+    if(audioCtx.state === 'suspended'){
+      audioCtx.resume();
+    }
+    stopMusic();
+    musicPlaying = true;
+    const tempo = 110; // BPM
+    const beatDur = 60/tempo; // seconds
+    let when = audioCtx.currentTime + 0.05;
+    const masterGain = audioCtx.createGain();
+    masterGain.gain.value = 0.16;
+    masterGain.connect(audioCtx.destination);
+
+    for(let i=0;i<melody.length;i++){
+      const [note,len] = melody[i];
+      const freq = notes[note] || 440;
+      const dur = beatDur * len * 0.95;
+      const osc = audioCtx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const g = audioCtx.createGain();
+      g.gain.setValueAtTime(0.0001, when);
+      g.gain.exponentialRampToValueAtTime(1.0, when + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.001, when + dur);
+      osc.connect(g);
+      g.connect(masterGain);
+      osc.start(when);
+      osc.stop(when + dur + 0.03);
+      scheduledNodes.push({osc:osc,gain:g});
+      when += dur + (beatDur*0.05);
+    }
+    // cleanup nodes after the melody ends
+    const finish = when + 0.1;
+    setTimeout(()=>{ stopMusic(); }, (finish - audioCtx.currentTime)*1000 + 200);
+  }
+
+  // ensure cleanup on page hide
+  window.addEventListener('pagehide', ()=>{
+    if(mediaStream){
+      mediaStream.getTracks().forEach(t=>t.stop());
+    }
+    stopMusic();
+  });
+
 })();
 </script>
 </body>
